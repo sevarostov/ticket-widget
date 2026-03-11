@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use EloquentTypeHinting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\Conversions\Conversion;
@@ -16,8 +18,18 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * @method void prepareToAttachMedia(Media $media, FileAdder $fileAdder)
  * @mixin EloquentTypeHinting
+ *
+ * @property int $id
+ * @property int|null $customer_id ID клиента
+ * @property string $topic Тема тикета
+ * @property string $text Текст тикета
+ * @property string $status Статус тикета (например: open, in_progress, closed)
+ * @property Carbon|null $date_responded_at Дата ответа на тикет
+ * @property Carbon|null $created_at Дата создания записи
+ * @property Carbon|null $updated_at Дата последнего обновления записи
+ *
+ * @method void prepareToAttachMedia(Media $media, FileAdder $fileAdder)
  *
  * Локальные скоупы
  * @method static Builder|static scopeForPeriod() Получение данных за  период
@@ -29,8 +41,45 @@ class Ticket extends Model implements HasMedia
 		'customer_id', 'topic', 'text', 'status', 'date_responded_at'
 	];
 
-	public function customer() {
-		return $this->belongsTo(Customer::class);
+	protected $casts = [
+		'date_responded_at' => 'datetime',
+		'created_at' => 'datetime',
+		'updated_at' => 'datetime',
+	];
+
+	public const STATUS_NEW = 'new';
+	public const STATUS_IN_PROGRESS = 'in_progress';
+	public const STATUS_PROCESSED = 'processed';
+
+	public function customer(): BelongsTo
+	{
+		return $this->belongsTo(Customer::class, 'customer_id');
+	}
+
+	/**
+	 * Получить массив всех возможных статусов
+	 *
+	 * @return array
+	 */
+	public static function getStatuses(): array
+	{
+		return [
+			self::STATUS_NEW => 'Новый',
+			self::STATUS_IN_PROGRESS => 'В работе',
+			self::STATUS_PROCESSED => 'Обработан'
+		];
+	}
+
+	/**
+	 * Получить читаемое название статуса
+	 *
+	 * @param string $status
+	 * @return string
+	 */
+	public static function getStatusLabel(string $status): string
+	{
+		$statuses = self::getStatuses();
+		return $statuses[$status] ?? $status;
 	}
 
 
@@ -108,9 +157,5 @@ class Ticket extends Model implements HasMedia
 
 	public function getMediaModel(): string {
 		// TODO: Implement getMediaModel() method.
-	}
-
-	public function __call($method, $parameters) {
-		// TODO: Implement @method void prepareToAttachMedia(Media $media, FileAdder $fileAdder)
 	}
 }
