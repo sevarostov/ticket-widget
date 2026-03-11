@@ -8,6 +8,7 @@
 [MySQL 9.1.0](https://hub.docker.com/r/mysql/mysql-server#!)
 [Testing: PHPUnit](https://docs.phpunit.de/)
 [Containerization: Docker 24.* + Docker Compose 2.*](https://www.docker.com)
+[laravel/ui](https://github.com/laravel/ui)
 
 ## Installation
 
@@ -51,6 +52,20 @@ docker exec -i php php artisan migrate
 ````
 docker exec php php artisan db:seed
 ````
+This cmd creates and saves to db:
+
+app users:
+**login**:`admin@example.com`
+**password**:`admin_pwd`
+
+**login**:`manager@example.com`
+**password**:`manager_pwd`
+
+customers and tickets. 
+
+
+## UI
+`npm install && npm run dev`
 
 ## Run tests
 

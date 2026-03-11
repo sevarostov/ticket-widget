@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
 		$user = null;
 		if (!User::where('email', $role . '@example.com')->exists()) {
 			$user = User::factory()
-				->withPassword($role)
+				->withPassword($role . "_pwd")
 				->create([
 					'name' => ucfirst($role) . ' User',
 					'email' => $role . '@example.com',
