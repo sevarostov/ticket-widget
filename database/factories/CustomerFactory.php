@@ -19,8 +19,8 @@ class CustomerFactory extends Factory
     {
         return [
 			'name' => fake()->name(),
-			'phone' => fake()->optional(0.8)->regexify('^\+79\d{9}$'),
-			'email' => fake()->optional(0.8)->safeEmail(),
+			'phone' => fake()->regexify('^\+79\d{9}$'),
+			'email' => fake()->safeEmail(),
 		];
     }
 }

@@ -63,6 +63,8 @@ app users:
 
 customers and tickets. 
 
+## Media upload
+`chmod -R 775 storage/app/public`
 
 ## UI
 `npm install && npm run dev`

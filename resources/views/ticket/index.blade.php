@@ -32,7 +32,7 @@
 							<tr>
 								<td>{{ $ticket->id }}</td>
 								<td>{{ Str::limit($ticket->topic, 50) }}</td>
-								<td>{{ $ticket->user->name ?? '' }}</td>
+								<td>{{ $ticket->customer->name ?? '' }}</td>
 								<td>
                 <span class="badge
                     @switch($ticket->status)

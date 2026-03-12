@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\ApiError;
+use App\Exceptions\CustomerException;
 use App\Models\Customer;
 use App\Models\Ticket;
 use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Throwable;
 
 class TicketService
 {
@@ -59,53 +60,55 @@ class TicketService
 	/**
 	 * @param array $data
 	 *
-	 * @return Ticket|null
+	 * @return Ticket|Exception
 	 */
-	public function createTicket(array $data): ?Ticket
+	public function createTicket(array $data): Ticket|Exception
 	{
-		try {
-			return DB::transaction(function () use ($data): Ticket {
+		return DB::transaction(function () use ($data): Ticket {
 
-				$email = Str::trim(Str::replace([' '], '', $data['email']));
-				$phone = Str::trim(Str::replace([' '], '', $data['phone']));
+			$email = Str::trim(Str::replace([' '], '', $data['email']));
+			$phone = Str::trim(Str::replace([' '], '', $data['phone']));
 
-				$existingTicket = Ticket::whereHas('customer', function ($query) use ($phone, $email) {
-					$query->where('phone', $phone)
-						->orWhere('email', $email);
-				})->whereDate('created_at', now()->toDateString())->first();
+			$existingTicket = Ticket::whereHas('customer', function ($query) use ($phone, $email) {
+				$query->where('phone', $phone)
+					->orWhere('email', $email);
+			})->whereDate('created_at', now()->toDateString())->first();
 
-				if ($existingTicket) {
-					throw new Exception('Too many requests', 429);
-				}
+			if ($existingTicket) {
+				throw new CustomerException(
+					ApiError::TodayTicketAlreadyExists,
+					ApiError::TodayTicketAlreadyExists->value
+				);
+			}
 
-				$customer = Customer::where(['phone' => $phone])->first()
-					?? Customer::where(['email' => $email])->first();
+			$customer = Customer::where(['phone' => $phone])->first()
+				?? Customer::where(['email' => $email])->first();
 
-				if (!$customer) {
-					$customer = Customer::create([
-						'email' => $email,
-						'phone' => $phone,
-						'name' => $data['name'],
-					]);
-					$customer->save();
-				}
-
-				$ticket = Ticket::create([
-					'customer_id' => $customer->id,
-					'topic' => $data['topic'],
-					'text' => $data['text']
+			if (!$customer) {
+				$customer = Customer::create([
+					'email' => $email,
+					'phone' => $phone,
+					'name' => $data['name'],
 				]);
+				$customer->save();
+			}
 
-				if (isset($data['file'])) {
-					$ticket->addMedia($data['file'])->toMediaCollection('files');
+			$ticket = Ticket::create([
+				'customer_id' => $customer->id,
+				'topic' => $data['topic'],
+				'text' => $data['text']
+			]);
+
+			$ticket->save();
+
+			if (isset($data['files'])) {
+				foreach ($data['files'] as $file) {var_dump($file);
+					$ticket->addMedia($file)->toMediaCollection('attachments');
 				}
+			}
 
-				return $ticket;
+			return $ticket;
 
-			}, 5);
-		} catch (Throwable $exception) {
-			//@todo log error
-			return null;
-		}
+		}, 5);
 	}
 }
