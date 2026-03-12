@@ -9,12 +9,7 @@ use Illuminate\View\View;
 
 class TicketController extends Controller
 {
-	protected TicketService $ticketService;
-
-	public function __construct(TicketService $ticketService)
-	{
-		$this->ticketService = $ticketService;
-	}
+	public function __construct(public readonly TicketService $ticketService) {}
 
 	/**
 	 * Показать список тикетов

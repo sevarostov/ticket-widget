@@ -32,11 +32,15 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @method void prepareToAttachMedia(Media $media, FileAdder $fileAdder)
  *
  * Локальные скоупы
- * @method static Builder|static scopeForPeriod() Получение данных за  период
+ * @method static Builder|static forPeriod(?string $period = 'day') Получение данных за  период
+ *
+ * Relations
+ * @property-read Customer customer
  */
 class Ticket extends Model implements HasMedia
 {
 	use HasFactory;
+
 	protected $fillable = [
 		'customer_id', 'topic', 'text', 'status', 'date_responded_at'
 	];
@@ -74,6 +78,7 @@ class Ticket extends Model implements HasMedia
 	 * Получить читаемое название статуса
 	 *
 	 * @param string $status
+	 *
 	 * @return string
 	 */
 	public static function getStatusLabel(string $status): string
@@ -85,77 +90,92 @@ class Ticket extends Model implements HasMedia
 
 	/**
 	 * @param Builder $query
-	 * @param string $period
+	 * @param ?string $period
 	 *
 	 * @return Builder
 	 */
-	public function scopeForPeriod(Builder $query, string $period): Builder {
-
+	public function scopeForPeriod(Builder $query, ?string $period = 'day'): Builder
+	{
 		$now = now();
 		return match ($period) {
-			'week' => $query->whereBetween('created_at', [$now->startOfWeek(), $now->endOfWeek()]),
-			'month' => $query->whereMonth('created_at', $now->month)->whereYear('created_at', $now->year),
-			default => $query->whereDate('created_at', $now->toDateString()),
+			'week' => $query->whereBetween('created_at', [$now->startOfWeek()->toDate(), $now->endOfWeek()->toDate()]),
+			'month' => $query->whereBetween('created_at', [$now->startOfMonth()->toDate(), $now->endOfMonth()->toDate()]),
+			default => $query->whereBetween('created_at', [$now->startOfDay()->toDate(), $now->endOfDay()->toDate()]),
 		};
 	}
 
-	public function media(): MorphMany {
+	public function media(): MorphMany
+	{
 		// TODO: Implement media() method.
 	}
 
-	public function addMedia(string|UploadedFile $file): FileAdder {
+	public function addMedia(string|UploadedFile $file): FileAdder
+	{
 		// TODO: Implement addMedia() method.
 	}
 
-	public function copyMedia(string|UploadedFile $file): FileAdder {
+	public function copyMedia(string|UploadedFile $file): FileAdder
+	{
 		// TODO: Implement copyMedia() method.
 	}
 
-	public function hasMedia(string $collectionName = ''): bool {
+	public function hasMedia(string $collectionName = ''): bool
+	{
 		// TODO: Implement hasMedia() method.
 	}
 
-	public function getMedia(string $collectionName = 'default', callable|array $filters = []): Collection {
+	public function getMedia(string $collectionName = 'default', callable|array $filters = []): Collection
+	{
 		// TODO: Implement getMedia() method.
 	}
 
-	public function clearMediaCollection(string $collectionName = 'default'): HasMedia {
+	public function clearMediaCollection(string $collectionName = 'default'): HasMedia
+	{
 		// TODO: Implement clearMediaCollection() method.
 	}
 
-	public function clearMediaCollectionExcept(string $collectionName = 'default', array|Collection $excludedMedia = []): HasMedia {
+	public function clearMediaCollectionExcept(string $collectionName = 'default', array|Collection $excludedMedia = []): HasMedia
+	{
 		// TODO: Implement clearMediaCollectionExcept() method.
 	}
 
-	public function shouldDeletePreservingMedia(): bool {
+	public function shouldDeletePreservingMedia(): bool
+	{
 		// TODO: Implement shouldDeletePreservingMedia() method.
 	}
 
-	public function loadMedia(string $collectionName) {
+	public function loadMedia(string $collectionName)
+	{
 		// TODO: Implement loadMedia() method.
 	}
 
-	public function addMediaConversion(string $name): Conversion {
+	public function addMediaConversion(string $name): Conversion
+	{
 		// TODO: Implement addMediaConversion() method.
 	}
 
-	public function registerMediaConversions(?Media $media = null): void {
+	public function registerMediaConversions(?Media $media = null): void
+	{
 		// TODO: Implement registerMediaConversions() method.
 	}
 
-	public function registerMediaCollections(): void {
+	public function registerMediaCollections(): void
+	{
 		// TODO: Implement registerMediaCollections() method.
 	}
 
-	public function registerAllMediaConversions(): void {
+	public function registerAllMediaConversions(): void
+	{
 		// TODO: Implement registerAllMediaConversions() method.
 	}
 
-	public function getMediaCollection(string $collectionName = 'default'): ?MediaCollection {
+	public function getMediaCollection(string $collectionName = 'default'): ?MediaCollection
+	{
 		// TODO: Implement getMediaCollection() method.
 	}
 
-	public function getMediaModel(): string {
+	public function getMediaModel(): string
+	{
 		// TODO: Implement getMediaModel() method.
 	}
 }
