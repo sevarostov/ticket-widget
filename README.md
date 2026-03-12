@@ -54,14 +54,15 @@ docker exec php php artisan db:seed
 ````
 This cmd creates and saves to db:
 
-app users:
+- app users:
+
 **login**:`admin@example.com`
 **password**:`admin_pwd`
 
 **login**:`manager@example.com`
 **password**:`manager_pwd`
 
-customers and tickets. 
+- customers and tickets. 
 
 ## Media upload
 `chmod -R 775 storage/app/public`
