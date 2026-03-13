@@ -64,6 +64,12 @@ This cmd creates and saves to db:
 
 - customers and tickets. 
 
+## Secured area (needs login with credentials above):
+[GET /ticket] ticket list with filters
+
+[GET /ticket/{id}] ticket's details with ability of downloading files
+
+
 ## Media upload
 `chmod -R 775 storage/app/public`
 `php artisan storage:link`
@@ -85,7 +91,7 @@ docker exec php vendor/bin/phpunit
 
 [POST /api/tickets]
 <h3> Request:</h3>
-`
+<pre>
 curl --location 'http://localhost/api/tickets' \
 --header 'Accept: application/json' \
 --header 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
@@ -108,9 +114,9 @@ curl --location 'http://localhost/api/tickets' \
 --form 'topic="Тема обращения"' \
 --form 'text="Текст обращения"' \
 --form '_token="oYQuStKOFxflvOoqGtXalMBtUHHwF9ZLVkIEbmch"'
-`
+</pre>
 <h3>Response:</h3>
-`
+<pre>
 {
   "data": {
     "id": 8488,
@@ -130,17 +136,17 @@ curl --location 'http://localhost/api/tickets' \
     "updated_at": "2026-03-13 11:30:54"
   }
 }
-`
+</pre>
 
 
 [GET /api/tickets/statistics]
 <h3> Request:</h3>
-`
+<pre>
 curl --location 'http://localhost/api/tickets/statistics?period=week' \
 --header 'Accept: application/json'
-`
+</pre>
 <h3>Response:</h3>
-`
+<pre>
 {
   "data": {
     "period": "week",
@@ -162,4 +168,4 @@ curl --location 'http://localhost/api/tickets/statistics?period=week' \
     "info": "Available periods are 'day', 'week', 'month'"
   }
 }
-`
+</pre>
