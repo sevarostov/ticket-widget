@@ -19,14 +19,11 @@ class TicketStatisticsResource extends JsonResource
 
 		$count = Ticket::forPeriod($period)->count();
 
-		$tickets = TicketResource::collection($count > 0
-			? Ticket::forPeriod($period)->get()
-			: []);
-
 		return [
 			'period' => $period,
+			'date' => Ticket::getDatePeriod($period),
 			'total' => $count,
-			'statistics' => $tickets,
+			'statistics' => Ticket::calculateStatistics(Ticket::forPeriod($period)->get()),
 		];
 	}
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use EloquentTypeHinting;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
@@ -102,6 +103,27 @@ class Ticket extends Model implements HasMedia
 	}
 
 	/**
+	 * @param ?string $period
+	 *
+	 * @return string
+	 */
+	public static function getDatePeriod(?string $period = 'day'): string
+	{
+		$now = now();
+		return match ($period) {
+			'week' => $now->startOfWeek()->toDate()->format('Y-m-d H:i:s') . ' - ' . $now->endOfWeek()
+					->toDate()
+					->format('Y-m-d H:i:s'),
+			'month' => $now->startOfMonth()->toDate()->format('Y-m-d H:i:s') . ' - ' . $now->endOfMonth()
+					->toDate()
+					->format('Y-m-d H:i:s'),
+			default => $now->startOfDay()->toDate()->format('Y-m-d H:i:s') . ' - ' . $now->endOfDay()
+					->toDate()
+					->format('Y-m-d H:i:s'),
+		};
+	}
+
+	/**
 	 * @param Media $media
 	 *
 	 * @return string
@@ -114,5 +136,46 @@ class Ticket extends Model implements HasMedia
 			? $extension
 			: 'file'
 		);
+	}
+
+	/**
+	 * Подсчитать статистику по статусам и ответам на тикеты
+	 *
+	 * @param Collection|array $tickets
+	 *
+	 * @return array
+	 */
+	public static function calculateStatistics(Collection|array $tickets): array
+	{
+		$statusCounts = [
+			self::STATUS_NEW => 0,
+			self::STATUS_IN_PROGRESS => 0,
+			self::STATUS_PROCESSED => 0
+		];
+
+		$responseCounts = [
+			'yes' => 0,
+			'no' => 0
+		];
+
+		foreach ($tickets as $ticket) {
+
+			if (isset($statusCounts[$ticket->status])) {
+				$statusCounts[$ticket->status]++;
+			}
+
+			if ($ticket->date_responded_at) {
+				$responseCounts['yes']++;
+			} else {
+				$responseCounts['no']++;
+			}
+		}
+
+		return [
+			'statistics' => [
+				'status' => $statusCounts,
+				'date_responded_at' => $responseCounts
+			]
+		];
 	}
 }

@@ -83,7 +83,8 @@ docker exec php vendor/bin/phpunit
 
 ## API Request and Response examples
 
-<h3>Request:</h3>
+[POST /api/tickets]
+<h3> Request:</h3>
 ```
 curl --location 'http://localhost/api/tickets' \
 --header 'Accept: application/json' \
@@ -108,7 +109,6 @@ curl --location 'http://localhost/api/tickets' \
 --form 'text="Текст обращения"' \
 --form '_token="oYQuStKOFxflvOoqGtXalMBtUHHwF9ZLVkIEbmch"'
 ```
-
 <h3>Response:</h3>
 ```
 {
@@ -128,6 +128,37 @@ curl --location 'http://localhost/api/tickets' \
     "date_responded_at": null,
     "created_at": "2026-03-13 11:30:54",
     "updated_at": "2026-03-13 11:30:54"
+  }
+}
+```
+
+
+[GET /api/tickets/statistics]
+<h3> Request:</h3>
+```
+curl --location 'http://localhost/api/tickets/statistics?period=day' \
+--header 'Accept: application/json'
+```
+<h3>Response:</h3>
+```
+{
+  "data": {
+    "period": "day",
+    "date": "2026-03-13 00:00:00 - 2026-03-13 23:59:59",
+    "total": 211,
+    "statistics": {
+      "statistics": {
+        "status": {
+          "new": 86,
+          "in_progress": 58,
+          "processed": 67
+        },
+        "date_responded_at": {
+          "yes": 51,
+          "no": 160
+        }
+      }
+    }
   }
 }
 ```
