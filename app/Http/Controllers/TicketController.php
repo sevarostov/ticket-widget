@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\TicketRepository;
 use App\Services\TicketService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -9,14 +10,19 @@ use Illuminate\View\View;
 
 class TicketController extends Controller
 {
-	public function __construct(public readonly TicketService $ticketService) {}
+	public function __construct(public readonly TicketRepository $ticketRepository) {}
 
 	/**
-	 * Показать список тикетов
+	 *
+	 * Cписок тикетов
+	 *
+	 * @param Request $request
+	 *
+	 * @return View
 	 */
-	public function index(): View
+	public function index(Request $request): View
 	{
-		return view('ticket.index', ['tickets' => $this->ticketService->getTickets(10)]);
+		return view('ticket.index', ['tickets' => $this->ticketRepository->getListBy($request, 10)]);
 	}
 
 	/**
@@ -24,7 +30,7 @@ class TicketController extends Controller
 	 */
 	public function show(int $id): View|RedirectResponse
 	{
-		if (!$ticket = $this->ticketService->getTicketById($id)) {
+		if (!$ticket = $this->ticketRepository->getTicketById($id)) {
 			return redirect()->back()->with('error', 'Элемент не найден');
 		}
 
@@ -36,13 +42,12 @@ class TicketController extends Controller
 	 */
 	public function updateStatus(Request $request, int $id): RedirectResponse
 	{
-		$status = $request->input('status');
-
-		if (!$ticket = $this->ticketService->getTicketById($id)) {
+		if (!$ticket = $this->ticketRepository->getTicketById($id)) {
 			return redirect()->back()->with('error', 'Элемент не найден');
 		}
 
-		if ($this->ticketService->updateTicketStatus($ticket, $status)) {
+		$status = $request->input('status');
+		if (new TicketService()->updateTicketStatus($ticket, $status)) {
 			return redirect()->back()->with('success', 'Статус тикета обновлён');
 		}
 

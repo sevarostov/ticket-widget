@@ -59,14 +59,14 @@ class Ticket extends Model implements HasMedia
 	/**
 	 * Получить массив всех возможных статусов
 	 *
-	 * @return array
+	 * @return array["new"=>"Новый"]
 	 */
 	public static function getStatuses(): array
 	{
 		return [
-			self::STATUS_NEW => 'Новый',
-			self::STATUS_IN_PROGRESS => 'В работе',
-			self::STATUS_PROCESSED => 'Обработан'
+			self::STATUS_NEW => "Новый",
+			self::STATUS_IN_PROGRESS => "В работе",
+			self::STATUS_PROCESSED => "Обработан"
 		];
 	}
 
@@ -95,8 +95,24 @@ class Ticket extends Model implements HasMedia
 		$now = now();
 		return match ($period) {
 			'week' => $query->whereBetween('created_at', [$now->startOfWeek()->toDate(), $now->endOfWeek()->toDate()]),
-			'month' => $query->whereBetween('created_at', [$now->startOfMonth()->toDate(), $now->endOfMonth()->toDate()]),
+			'month' => $query->whereBetween('created_at', [$now->startOfMonth()->toDate(), $now->endOfMonth()
+				->toDate()]),
 			default => $query->whereBetween('created_at', [$now->startOfDay()->toDate(), $now->endOfDay()->toDate()]),
 		};
+	}
+
+	/**
+	 * @param Media $media
+	 *
+	 * @return string
+	 */
+	public static function getSvgImageOfMediaFile(Media $media): string
+	{
+		$extension = strtolower(pathinfo($media->file_name, PATHINFO_EXTENSION));
+		return (
+		in_array(mb_strtolower($extension), ['png', 'jpg', 'docx', 'gif', 'pdf', 'png', 'txt', 'xlsx'])
+			? $extension
+			: 'file'
+		);
 	}
 }

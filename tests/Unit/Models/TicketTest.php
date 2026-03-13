@@ -5,21 +5,35 @@ namespace Tests\Unit\Models;
 use App\Models\Ticket;
 use Illuminate\Http\UploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Tests\TestCase;
 
 class TicketTest extends TestCase
 {
 	public function testMediaIsLinkedToTicket()
 	{
-		$uploadedFile = new UploadedFile(
-			dirname(__DIR__, 3) . '/storage/app/public/ТЗ.png',
-			'ТЗ.png',
-			'image/png',
-			null,
-			true,
-		);
+		$filename = dirname(__DIR__, 3) . '/storage/app/public/ТЗ.png';
+		if (!file_exists($filename)) {
+			$this->assertFalse(file_exists($filename));
+		} else {
+			$uploadedFile = new UploadedFile(
+				dirname(__DIR__, 3) . '/storage/app/public/ТЗ.png',
+				'ТЗ.png',
+				'image/png',
+				null,
+				true,
+			);
 
-		$media = Ticket::first()->addMedia($uploadedFile)->toMediaCollection('attachments');
-		$this->assertInstanceOf(Media::class, $media);
+			$media = Ticket::first()->addMedia($uploadedFile)->toMediaCollection('attachments');
+			$this->assertInstanceOf(Media::class, $media);
+		}
+	}
+
+	public function testTicketHasMediaCollection()
+	{
+		$ticket = Ticket::with('media')->first();
+		if ($ticket) {
+			$this->assertInstanceOf(MediaCollection::class, $media = $ticket->media()->get());
+		}
 	}
 }

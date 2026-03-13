@@ -63,6 +63,11 @@
 							<span>{{ $ticket->customer->name ?? 'Не указан' }}</span>
 						</div>
 						
+						<div class="mb-4">
+							<strong>Email:</strong>
+							<span>{{ $ticket->customer->email ?? 'Не указан' }}</span>
+						</div>
+						
 						<!-- Текст тикета -->
 						<div class="mb-4">
 							<strong>Описание:</strong>
@@ -93,8 +98,52 @@
 								</select>
 							</form>
 						</div>
+						
+						<!-- Медиа‑файлы тикета -->
+						@if($ticket->hasMedia('attachments'))
+							<div class="mb-4">
+								<h4>Прикреплённые файлы</h4>
+								
+								<div class="row">
+									@foreach($ticket->getMedia('attachments') as $media)
+										<div class="">
+											<div class="card">
+												<div class="card-body text-center">
+													<div class="file-icon mb-2">
+														@php
+															$extension = pathinfo($media->file_name, PATHINFO_EXTENSION);
+													$icon = \App\Models\Ticket::getSvgImageOfMediaFile($media);
+														@endphp
+														<img style = "width: 30px; height: 30px;"  src="/images/{{$icon}}.svg">
+													</div>
+													
+													<h6 class="card-title mb-1">{{ $media->file_name }}</h6>
+													
+													<small class="text-muted">
+														{{ round($media->size_in_bytes / 1024, 1) }} KB
+													</small>
+													
+													<div class="mt-2">
+														<a href="{{ $media->getFullUrl() }}"
+														   class="btn btn-sm btn-outline-primary"
+														   target="_blank"
+														   download>
+															<i class="bi bi-download"></i> Скачать
+														</a>
+													</div>
+												</div>
+											</div>
+											@endforeach
+										</div>
+								</div>
+								@else
+									<div class="alert alert-info">
+										К этому тикету не прикреплено файлов.
+									</div>
+								@endif
+							
+							</div>
 					</div>
 				</div>
 			</div>
-		</div>
 @endsection

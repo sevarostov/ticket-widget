@@ -14,6 +14,78 @@
 			<div class="alert alert-danger">{{ session('error') }}</div>
 		@endif
 		
+		<!-- Блок фильтров -->
+		<div class="row mb-4">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header bg-light">
+						<h5 class="mb-0">Фильтры</h5>
+					</div>
+					<div class="card-body">
+						<form method="GET" action="{{ route('ticket.index') }}">
+							<div class="row g-3">
+								<div class="col-md-3">
+									<label for="date_from" class="form-label">Дата создания от</label>
+									<input type="date"
+									       id="date_from"
+									       name="date_from"
+									       class="form-control"
+									       value="{{ request('date_from') }}">
+								</div>
+								
+								<div class="col-md-3">
+									<label for="date_to" class="form-label">до</label>
+									<input type="date"
+									       id="date_to"
+									       name="date_to"
+									       class="form-control"
+									       value="{{ request('date_to') }}">
+								</div>
+								
+								<div class="col-md-3">
+									<label for="status" class="form-label">Статус</label>
+									<select id="status" name="status" class="form-select">
+										<option value="">Все статусы</option>
+										@foreach(array_keys(\App\Models\Ticket::getStatuses()) as $status)
+											<option value="{{ $status }}"
+													{{ request('status') == $status ? 'selected' : '' }}>
+												{{ \App\Models\Ticket::getStatusLabel($status) }}
+											</option>
+										@endforeach
+									</select>
+								</div>
+								
+								<div class="col-md-3">
+									<label for="customer_email" class="form-label">Email пользователя</label>
+									<input type="email"
+									       id="customer_email"
+									       name="customer_email"
+									       class="form-control"
+									       placeholder="Введите email"
+									       value="{{ request('customer_email') }}">
+								</div>
+								
+								<div class="col-md-3">
+									<label for="customer_phone" class="form-label">Телефон пользователя</label>
+									<input type="text"
+									       id="customer_phone"
+									       name="customer_phone"
+									       class="form-control"
+									       placeholder="Введите телефон"
+									       value="{{ request('customer_phone') }}">
+								</div>
+								
+								<div class="col-md-3 d-flex gap-2 align-items-end">
+									<button type="submit" class="btn btn-primary">Применить</button>
+									<a href="{{ route('ticket.index') }}" class="btn btn-secondary">Сбросить</a>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		<div class="row">
 			<div class="col-12">
 				<div class="table-responsive">
@@ -58,9 +130,11 @@
 										   class="btn btn-sm btn-outline-primary">
 											<i class="bi bi-eye"></i> Просмотр
 										</a>
-										<form action="{{ route('ticket.updateStatus', $ticket->id) }}" method="POST" class="d-inline">
+										<form action="{{ route('ticket.updateStatus', $ticket->id) }}" method="POST"
+										      class="d-inline">
 											@csrf
-											<select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+											<select name="status" class="form-select form-select-sm d-inline w-auto"
+											        onchange="this.form.submit()">
 												<option value="{{ \App\Models\Ticket::STATUS_NEW }}"
 														{{ $ticket->status === \App\Models\Ticket::STATUS_NEW ? 'selected' : '' }}>
 													Открытый

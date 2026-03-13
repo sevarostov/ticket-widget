@@ -7,31 +7,12 @@ use App\Exceptions\CustomerException;
 use App\Models\Customer;
 use App\Models\Ticket;
 use Exception;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class TicketService
 {
-	/**
-	 * Получить список тикетов с пагинацией
-	 */
-	public function getTickets(int $perPage = 10): LengthAwarePaginator
-	{
-		return Ticket::with('customer')
-			->orderBy('created_at', 'desc')
-			->paginate($perPage)
-			->withQueryString();
-	}
 
-	/**
-	 * Получить тикет по ID
-	 */
-	public function getTicketById(int $id): ?Ticket
-	{
-
-		return Ticket::with('customer')->find($id);
-	}
 
 	/**
 	 * @param Ticket $ticket
@@ -102,7 +83,7 @@ class TicketService
 			$ticket->save();
 
 			if (isset($data['files'])) {
-				foreach ($data['files'] as $file) {var_dump($file);
+				foreach ($data['files'] as $file) {
 					$ticket->addMedia($file)->toMediaCollection('attachments');
 				}
 			}

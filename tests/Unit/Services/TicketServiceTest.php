@@ -5,7 +5,6 @@ namespace Tests\Unit\Services;
 use App\Models\Customer;
 use App\Models\Ticket;
 use App\Services\TicketService;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -43,37 +42,6 @@ class TicketServiceTest extends TestCase
 			Ticket::where(['customer_id' => $customer->id])->delete();
 			Customer::where(['email' => $email])->delete();
 		}
-	}
-
-	public function testGetTicketsReturnsPaginator(): void
-	{
-		$result = $this->service->getTickets();
-		$this->assertInstanceOf(LengthAwarePaginator::class, $result);
-		$this->assertEquals(10, $result->perPage());
-
-		foreach ($result->items() as $ticket) {
-			$this->assertInstanceOf(Ticket::class, $ticket);
-			$this->assertNotNull($ticket->customer);
-		}
-	}
-
-	public function testGetTicketByIdReturnsTicketIfExists(): void
-	{
-		/** @var Customer $customer */
-		$customer = Customer::factory()->create();
-		/** @var Ticket $ticket */
-		$ticket = Ticket::factory()->create(['customer_id' => $customer->id]);
-
-		$result = $this->service->getTicketById($ticket->id);
-		$this->assertInstanceOf(Ticket::class, $result);
-		$this->assertEquals($ticket->id, $result->id);
-		$this->assertNotNull($result->customer);
-	}
-
-	public function testGetTicketByIdReturnsNullWhenNotFound(): void
-	{
-		$result = $this->service->getTicketById(999999);
-		$this->assertNull($result);
 	}
 
 	public function testUpdateTicketStatusReturnsUpdatedTicketForValidStatus(): void
