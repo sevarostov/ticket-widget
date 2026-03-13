@@ -1,0 +1,350 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Ticket API",
+        "description": "API для работы с тикетами поддержки",
+        "contact": {
+            "email": "api@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/tickets": {
+            "post": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Создание нового тикета",
+                "description": "Создаёт новый тикет на основе переданных данных клиента",
+                "operationId": "2a7d76295d0f9f3e0e63adb2ed4a0596",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone",
+                                    "topic",
+                                    "text"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Имя клиента",
+                                        "type": "string",
+                                        "example": "seva"
+                                    },
+                                    "email": {
+                                        "description": "Email клиента",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "enter@mail.com"
+                                    },
+                                    "phone": {
+                                        "description": "Телефон клиента",
+                                        "type": "string",
+                                        "example": "+79981378544"
+                                    },
+                                    "topic": {
+                                        "description": "Тема обращения",
+                                        "type": "string",
+                                        "example": "Тема обращения"
+                                    },
+                                    "text": {
+                                        "description": "Текст обращения",
+                                        "type": "string",
+                                        "example": "Текст обращения"
+                                    },
+                                    "_token": {
+                                        "description": "CSRF‑токен",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Тикет успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TicketResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации данных",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tickets/statistics": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Статистика по тикетам",
+                "description": "Возвращает статистику по тикетам за указанный период",
+                "operationId": "d0b905803de0d5824273d266db389dc8",
+                "parameters": [
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "Период для статистики",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "day",
+                            "enum": [
+                                "day",
+                                "week",
+                                "month"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статистика успешно получена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TicketStatisticsResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CustomerResource": {
+                "title": "Customer Resource",
+                "description": "Представление данных клиента в API‑ответе",
+                "properties": {
+                    "id": {
+                        "description": "Уникальный идентификатор клиента",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 837
+                    },
+                    "name": {
+                        "description": "Имя клиента",
+                        "type": "string",
+                        "example": "seva"
+                    },
+                    "phone": {
+                        "description": "Номер телефона клиента в формате E.164",
+                        "type": "string",
+                        "example": "+79981378544"
+                    },
+                    "email": {
+                        "description": "Email клиента",
+                        "type": "string",
+                        "format": "email",
+                        "example": "enter@mail.com"
+                    },
+                    "created_at": {
+                        "description": "Дата и время создания записи о клиенте",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-13 11:30:54"
+                    },
+                    "updated_at": {
+                        "description": "Дата и время последнего обновления записи о клиенте",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-13 11:30:54"
+                    }
+                },
+                "type": "object"
+            },
+            "TicketResource": {
+                "title": "Ticket Resource",
+                "description": "Представление тикета в API‑ответе",
+                "properties": {
+                    "id": {
+                        "description": "Уникальный идентификатор тикета",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 8488
+                    },
+                    "customer": {
+                        "$ref": "#/components/schemas/CustomerResource"
+                    },
+                    "topic": {
+                        "description": "Тема тикета",
+                        "type": "string",
+                        "example": "Тема обращения"
+                    },
+                    "text": {
+                        "description": "Текст сообщения клиента",
+                        "type": "string",
+                        "example": "Текст обращения"
+                    },
+                    "status": {
+                        "description": "Статус обработки тикета",
+                        "type": "string",
+                        "example": null,
+                        "nullable": true,
+                        "enum": [
+                            "new",
+                            "in_progress",
+                            "processed"
+                        ]
+                    },
+                    "date_responded_at": {
+                        "description": "Дата и время ответа менеджера",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Дата и время создания тикета",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-13 11:30:54"
+                    },
+                    "updated_at": {
+                        "description": "Дата и время последнего обновления тикета",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-13 11:30:54"
+                    }
+                },
+                "type": "object"
+            },
+            "TicketStatisticsResource": {
+                "title": "Ticket Statistics Resource",
+                "description": "Статистика по тикетам за указанный период",
+                "properties": {
+                    "period": {
+                        "description": "Период для статистики",
+                        "type": "string",
+                        "example": "week",
+                        "enum": [
+                            "day",
+                            "week",
+                            "month"
+                        ]
+                    },
+                    "date": {
+                        "description": "Диапазон дат для выбранного периода",
+                        "type": "string",
+                        "example": "2026-03-09 00:00:00 - 2026-03-15 23:59:59"
+                    },
+                    "total": {
+                        "description": "Общее количество тикетов за период",
+                        "type": "integer",
+                        "example": 8143
+                    },
+                    "statistics": {
+                        "description": "Детальная статистика по статусам и ответам",
+                        "properties": {
+                            "status": {
+                                "description": "Распределение тикетов по статусам",
+                                "properties": {
+                                    "new": {
+                                        "description": "Количество тикетов со статусом 'new'",
+                                        "type": "integer",
+                                        "example": 2721
+                                    },
+                                    "in_progress": {
+                                        "description": "Количество тикетов со статусом 'in_progress'",
+                                        "type": "integer",
+                                        "example": 2715
+                                    },
+                                    "processed": {
+                                        "description": "Количество тикетов со статусом 'processed'",
+                                        "type": "integer",
+                                        "example": 2707
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "date_responded_at": {
+                                "description": "Распределение по наличию ответа",
+                                "properties": {
+                                    "yes": {
+                                        "description": "Количество тикетов с ответом",
+                                        "type": "integer",
+                                        "example": 2424
+                                    },
+                                    "no": {
+                                        "description": "Количество тикетов без ответа",
+                                        "type": "integer",
+                                        "example": 5719
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "info": {
+                        "description": "Информация о доступных периодах",
+                        "type": "string",
+                        "example": "Available periods are 'day', 'week', 'month'"
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationError": {
+                "title": "Validation Error",
+                "description": "Ошибка валидации данных — содержит общее сообщение и детали по каждому полю",
+                "properties": {
+                    "message": {
+                        "description": "Общее сообщение об ошибке валидации. Может содержать краткое описание проблемы и указание на количество дополнительных ошибок",
+                        "type": "string",
+                        "example": "Имя обязательно для заполнения (and 4 more errors)"
+                    },
+                    "errors": {
+                        "description": "Объект с детальной информацией об ошибках валидации по каждому полю. Ключи — названия полей, значения — массивы сообщений об ошибках",
+                        "type": "object",
+                        "additionalProperties": {
+                            "description": "Массив сообщений об ошибках для конкретного поля",
+                            "type": "array",
+                            "items": {}
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Tickets",
+            "description": "Tickets"
+        },
+        {
+            "name": "Statistics",
+            "description": "Statistics"
+        }
+    ]
+}

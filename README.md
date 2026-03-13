@@ -169,3 +169,9 @@ curl --location 'http://localhost/api/tickets/statistics?period=week' \
   }
 }
 </pre>
+
+## Open api docs
+
+Php attributes are used to document open api endpoints
+
+[GET /api/documentation] 
