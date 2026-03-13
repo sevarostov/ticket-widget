@@ -15,7 +15,9 @@ class TicketStatisticsResource extends JsonResource
 	 */
 	public function toArray(Request $request): array
 	{
-		$period = $request->input('period', 'day');
+		$period = in_array($period = $request->input('period', 'day'), ['day', 'week', 'month'])
+			? $period
+			: 'day';
 
 		$count = Ticket::forPeriod($period)->count();
 
@@ -24,6 +26,7 @@ class TicketStatisticsResource extends JsonResource
 			'date' => Ticket::getDatePeriod($period),
 			'total' => $count,
 			'statistics' => Ticket::calculateStatistics(Ticket::forPeriod($period)->get()),
+			'info' => "Available periods are 'day', 'week', 'month'",
 		];
 	}
 }

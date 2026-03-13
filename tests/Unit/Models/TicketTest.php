@@ -31,6 +31,10 @@ class TicketTest extends TestCase
 
 	public function testTicketHasMediaCollection()
 	{
+		dd('d');
+
+
+
 		$ticket = Ticket::with('media')->first();
 		if ($ticket) {
 			$this->assertInstanceOf(MediaCollection::class, $media = $ticket->media()->get());

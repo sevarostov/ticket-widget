@@ -85,7 +85,7 @@ docker exec php vendor/bin/phpunit
 
 [POST /api/tickets]
 <h3> Request:</h3>
-```
+`
 curl --location 'http://localhost/api/tickets' \
 --header 'Accept: application/json' \
 --header 'Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7' \
@@ -108,9 +108,9 @@ curl --location 'http://localhost/api/tickets' \
 --form 'topic="Тема обращения"' \
 --form 'text="Текст обращения"' \
 --form '_token="oYQuStKOFxflvOoqGtXalMBtUHHwF9ZLVkIEbmch"'
-```
+`
 <h3>Response:</h3>
-```
+`
 {
   "data": {
     "id": 8488,
@@ -130,35 +130,36 @@ curl --location 'http://localhost/api/tickets' \
     "updated_at": "2026-03-13 11:30:54"
   }
 }
-```
+`
 
 
 [GET /api/tickets/statistics]
 <h3> Request:</h3>
-```
-curl --location 'http://localhost/api/tickets/statistics?period=day' \
+`
+curl --location 'http://localhost/api/tickets/statistics?period=week' \
 --header 'Accept: application/json'
-```
+`
 <h3>Response:</h3>
-```
+`
 {
   "data": {
-    "period": "day",
-    "date": "2026-03-13 00:00:00 - 2026-03-13 23:59:59",
-    "total": 211,
+    "period": "week",
+    "date": "2026-03-09 00:00:00 - 2026-03-15 23:59:59",
+    "total": 8143,
     "statistics": {
       "statistics": {
         "status": {
-          "new": 86,
-          "in_progress": 58,
-          "processed": 67
+          "new": 2721,
+          "in_progress": 2715,
+          "processed": 2707
         },
         "date_responded_at": {
-          "yes": 51,
-          "no": 160
+          "yes": 2424,
+          "no": 5719
         }
       }
-    }
+    },
+    "info": "Available periods are 'day', 'week', 'month'"
   }
 }
-```
+`
