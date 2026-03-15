@@ -1,6 +1,6 @@
 ## Demo project for collecting and processing feedback tickets from the site through a universal widget, API to save tickets, admin panel to manage tickets, built with Laravel 12, PHP 8,4 and Mysql 9 using Docker compose
 
-## Technical Requirements (see details in INFO.md)
+## Technical Requirements (see details in https://github.com/sevarostov/ticket-widget.git/INFO.md)
 
 [PHP 8.4](https://www.php.net/releases/8.4/en.php)
 [Composer (System Requirements)](https://getcomposer.org/doc/00-intro.md#system-requirements)
