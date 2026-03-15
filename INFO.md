@@ -224,9 +224,13 @@ email: hr@example.com;
 Таблица сравнения прав
 Функция	                    admin	manager	  hr
 Доступ к /home	              ✅	  ✅	   ✅
+
 Доступ к /ticket (список)	  ✅	  ✅	   ❌
+
 Просмотр тикета (/ticket/{id})✅	  ✅	   ❌
+
 Обновление статуса тикета	  ✅	  ❌	   ❌
+
 
 Механизм проверки прав
 Используется кастомное middleware EnsureUserHasRole
