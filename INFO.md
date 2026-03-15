@@ -223,6 +223,7 @@ email: hr@example.com;
 
 Таблица сравнения прав
 Функция	                    admin	manager	  hr
+
 Доступ к /home	              ✅	  ✅	   ✅
 
 Доступ к /ticket (список)	  ✅	  ✅	   ❌
