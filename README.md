@@ -1,6 +1,6 @@
 ## Demo project for collecting and processing feedback tickets from the site through a universal widget, API to save tickets, admin panel to manage tickets, built with Laravel 12, PHP 8,4 and Mysql 9 using Docker compose
 
-## Technical Requirements
+## Technical Requirements (see details in INFO.md)
 
 [PHP 8.4](https://www.php.net/releases/8.4/en.php)
 [Composer (System Requirements)](https://getcomposer.org/doc/00-intro.md#system-requirements)
@@ -59,15 +59,25 @@ This cmd creates and saves to db:
 **login**:`admin@example.com`
 **password**:`admin_pwd`
 
+Has roles `admin`,`manager`,`hr`
+
 **login**:`manager@example.com`
 **password**:`manager_pwd`
+
+Has role `manager`
+
+**login**:`hr@example.com`
+**password**:`hr_pwd`
+
+Has role `hr`
 
 - customers and tickets. 
 
 ## Secured area (needs login with credentials above):
-[GET /ticket] ticket list with filters
-
-[GET /ticket/{id}] ticket's details with ability of downloading files
+[GET /home] free access to all authorized users (roles no matter), for user `hr@example.com` too
+[GET /ticket] ticket list with filters (granted access for role `manager`) for users `manager@example.com` and `admin@example.com`
+[GET /ticket/{id}] ticket's details with ability of downloading files (granted access for role `manager`) for users `manager@example.com` and `admin@example.com`
+[POST /ticket/{id}/status] change ticket's status (granted access for role `admin`) only for user `admin@example.com`
 
 
 ## Media upload
