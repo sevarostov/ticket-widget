@@ -5,7 +5,8 @@ namespace App\Enums;
 /**
  * Ошибки, которые могут возникнуть при работе с API
  */
-enum ApiError: int {
+enum ApiError: int
+{
 	/**
 	 * Отсутствие ошибки
 	 */
@@ -26,16 +27,20 @@ enum ApiError: int {
 	 */
 	case TodayTicketAlreadyExists = 429;
 
+	case Forbidden = 403;
+
 	/**
 	 * Получить описание ошибки
 	 *
 	 * @return string
 	 */
-	public function getDescription(): string {
+	public function getDescription(): string
+	{
 		return match ($this) {
 			self::NoError => "",
 			self::RuntimeError => "Произошла ошибка. Пожалуйста, попробуйте позже или свяжитесь с Службой поддержки",
 			self::TodayTicketAlreadyExists => "Возможно подать одну заявку в сутки",
+			self::Forbidden => "Недостаточно прав для совершения действия",
 		};
 	}
 }

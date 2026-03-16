@@ -34,6 +34,7 @@ class RoleAccessTest extends TestCase
 		$this->loginUserByEmail('admin@example.com');
 
 		$response = $this->get(route('ticket.index'));
+
 		$response->assertStatus(200);
 
 		if ($this->ticket) {

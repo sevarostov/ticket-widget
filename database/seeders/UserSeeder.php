@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
 			$this->createPermissionsByRole($role);
 			$this->createUserByRole($role);
 		}
-		$this->assignAdminRoles();
+		$this->assignAdminRolesAndPermissions();
 	}
 
 	/**
@@ -47,7 +47,7 @@ class UserSeeder extends Seeder
 	private function createPermissionsByRole(Role $role): void
 	{
 		$objects = match ($role->name) {
-			'admin' => ['ticket.updateStatus', 'ticket', 'resume'],
+			'admin' => ['ticket', 'edit ticket', 'resume'],
 			'hr' => ['resume'],
 			default => ['ticket'],
 		};
@@ -93,7 +93,7 @@ class UserSeeder extends Seeder
 	 *
 	 * @return void
 	 */
-	private function assignAdminRoles(): void
+	private function assignAdminRolesAndPermissions(): void
 	{
 		$admin = User::where('email', 'admin@example.com')->first();
 
@@ -102,6 +102,18 @@ class UserSeeder extends Seeder
 			if (!$admin->hasRole($role)) {
 				$admin->assignRole($role);
 			}
+		}
+
+		$editTicketPermission = 'edit ticket';
+		$permission = Permission::where('name', $editTicketPermission)->first();
+		if (!$permission) {
+			$permission = Permission::create([
+				'name' => $editTicketPermission,
+			]);
+		}
+
+		if (!$admin->hasPermissionTo($permission)) {
+			$admin->givePermissionTo($permission);
 		}
 	}
 }

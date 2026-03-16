@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ApiError;
 use App\Repositories\TicketRepository;
 use App\Services\TicketService;
 use Illuminate\Http\RedirectResponse;
@@ -42,6 +43,10 @@ class TicketController extends Controller
 	 */
 	public function updateStatus(Request $request, int $id): RedirectResponse
 	{
+		if (!$request->user()->can('edit ticket')) {
+			return redirect()->back()->with('error', ApiError::Forbidden->getDescription());
+		}
+
 		if (!$ticket = $this->ticketRepository->getTicketById($id)) {
 			return redirect()->back()->with('error', 'Элемент не найден');
 		}
